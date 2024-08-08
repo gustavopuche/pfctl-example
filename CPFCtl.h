@@ -1,10 +1,6 @@
 #ifndef _PFCTL_H_
 #define _PFCTL_H_
 
-#ifdef linux
-#include "typedefs.h"
-#endif
-
 #include <net/if.h>
 #include <net/pfvar.h>
 
@@ -36,6 +32,15 @@
 #define PF_OPTIMIZE_BASIC     	0x0001
 #define PF_OPTIMIZE_PROFILE   	0x0002
 
+#define	PF_MD5_DIGEST_LENGTH	  16
+
+#define FCNT_NAMES { \
+	"searches", \
+	"inserts", \
+	"removals", \
+	NULL \
+}
+
 /// @brief Helper class to get pfctl data
 ///
 class CPFCtl
@@ -44,24 +49,13 @@ class CPFCtl
   CPFCtl();
 
  private:
-  int pfctlGetStates(int dev, const char* iface, int opts, long shownr);
-  void print_name(struct pf_addr*, sa_family_t);
-  void print_addr(struct pf_addr_wrap* addr, sa_family_t af, int verbose);
-  void print_addr_str(sa_family_t af, struct pf_addr* addr);
-  void print_host(struct pf_addr* addr, uint16_t port,
-                  sa_family_t af, uint16_t rdom,
-                  const char* proto, int opts);
-  void print_seq(struct pf_state_peer* p);
-  void print_state(struct pf_state* s, int opts);
-  int unmask(struct pf_addr* m);
+  int GetStatus(int dev);
+  void printStatus(struct pf_status *s);
 
-  static constexpr const char* mPFDevice = "/dev/pf";
+  static constexpr const char* mDevice = "/dev/pf";
   static constexpr const char* mIface    = "info";
-  // const char	*pf_reasons[PFRES_MAX+1] = PFRES_NAMES;
-  // const char	*pf_lcounters[LCNT_MAX+1] = LCNT_NAMES;
-  // const char	*pf_fcounters[FCNT_MAX+1] = FCNT_NAMES;
-  // const char	*pf_scounters[SCNT_MAX+1] = FCNT_NAMES;
-  // const char	*pf_ncounters[NCNT_MAX+1] = FCNT_NAMES;
+  const char	*pf_reasons[PFRES_MAX+1] = PFRES_NAMES;
+  const char	*pf_fcounters[FCNT_MAX+1] = FCNT_NAMES;
 };
 
 #endif /* _PFCTL_H_ */
